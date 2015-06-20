@@ -1,13 +1,14 @@
 package com.jakerobers.flatten;
 
 import java.io.File;
+import java.util.Arrays;
 
 import fs.*;
 
 public abstract class Flattener {
 	FileSystem fs;
 	
-	public abstract void execute(File f, String destination);
+	public abstract void execute(File source, String destination);
 	
 	public Flattener() {
 		String os = System.getProperty("os.name");
@@ -18,7 +19,7 @@ public abstract class Flattener {
 		}
 	}
 	
-	public void traverse(String source, String destination) {
+	public void traverse(String source, String destination) throws Exception {
 		File root = new File(source);
 		File[] files = root.listFiles();
 		
@@ -29,15 +30,12 @@ public abstract class Flattener {
 		for ( File f : files ) {
 			if ( f.isDirectory() ) {
 				recurse(source, f.getAbsolutePath(), destination);
+				System.exit(0);
 			}
 		}
 	}
 	
-	public void execute(String newName, File f, String destination) {
-		// Overridden by subclasses.
-	}
-	
-	private void recurse(String root, String source, String destination) {
+	private void recurse(String root, String source, String destination) throws Exception {
 		File folderToTraverse = new File(source);
 		File[] files = folderToTraverse.listFiles();
 		
@@ -45,13 +43,23 @@ public abstract class Flattener {
 			return;
 		}
 		
-		for ( File f : files ) {
-			if ( f.isDirectory() ) {
-				recurse(root, f.getAbsolutePath(), destination);
-			} else {
-				//String newName = getFilename(root, f.getAbsolutePath());
-				//execute(newName, f, destination);
+		for ( File fileToBeMoved : files ) {
+			if ( fileToBeMoved.isDirectory() ) {
+				recurse(root, fileToBeMoved.getAbsolutePath(), destination);
+			} else {	//is file
+				if(!Arrays.asList(fs.getBlacklistedFiles()).contains(fileToBeMoved.getName())) {
+					String newDestination = fs.newFileDestination(root, fileToBeMoved.getAbsolutePath());
+					execute(fileToBeMoved, newDestination);
+				}
 			}
 		}
+	}
+	
+	public void move(String source) throws Exception {
+		throw new Exception("Oops. Something went wrong. Error code: 3");
+	}
+	
+	public void copy(String source) throws Exception {
+		throw new Exception("Oops. Something went wrong. Error code: 4");
 	}
 }

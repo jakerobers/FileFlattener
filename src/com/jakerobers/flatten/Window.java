@@ -8,6 +8,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.ButtonGroup;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.JRadioButton;
 import javax.swing.UIManager;
@@ -26,7 +27,7 @@ public class Window extends JFrame {
 	private JFileChooser fc;
 	private File selectedDir;
 	private Setting currentSetting;
-	private enum Setting {MODIFY, NEW};
+	private enum Setting {MOVE, COPY};
 
 	/**
 	 * Launch the application.
@@ -48,18 +49,6 @@ public class Window extends JFrame {
 	 * Create the frame.
 	 */
 	public Window() {
-		try {
-			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (UnsupportedLookAndFeelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -89,11 +78,17 @@ public class Window extends JFrame {
 		JRadioButton rdbtnModifyCurrentDirectory = new JRadioButton("Modify Directory");
 		rdbtnModifyCurrentDirectory.setFont(new Font("Arial", Font.PLAIN, 13));
 		rdbtnModifyCurrentDirectory.setBounds(6, 88, 153, 23);
+		rdbtnModifyCurrentDirectory.addActionListener(e -> {
+			this.currentSetting = Setting.MOVE;
+		});
 		panel_1.add(rdbtnModifyCurrentDirectory);
 		
 		JRadioButton rdbtnCreateDuplicate = new JRadioButton("Create Duplicate");
 		rdbtnCreateDuplicate.setFont(new Font("Arial", Font.PLAIN, 13));
 		rdbtnCreateDuplicate.setBounds(199, 88, 170, 23);
+		rdbtnCreateDuplicate.addActionListener(e -> {
+			this.currentSetting = Setting.COPY;
+		});
 		panel_1.add(rdbtnCreateDuplicate);
 		
 		ButtonGroup group = new ButtonGroup();
@@ -119,7 +114,12 @@ public class Window extends JFrame {
 		btnGo.setFont(new Font("Arial", Font.PLAIN, 13));
 		btnGo.setBounds(6, 157, 139, 29);
 		btnGo.addActionListener(e -> {
-			this.go();
+			try {
+				this.go();
+			} catch (Exception e1) {
+				showErrorMessage(this, e1.getMessage());
+				e1.printStackTrace();
+			}
 		});
 		panel_1.add(btnGo);
 		
@@ -130,17 +130,24 @@ public class Window extends JFrame {
 		panel_1.add(lblIAmNot);
 	}
 	
-	public void go() {
+	public void go() throws Exception {
 		if ( this.currentSetting != null && this.selectedDir != null) {
 			Flattener f;
 			switch(this.currentSetting) {
-				case MODIFY:
+				case MOVE:
 					f = new MoveFlattener();
+					f.move(this.selectedDir.getAbsolutePath());
 					break;
-				case NEW:
+				case COPY:
 					f = new CopyFlattener();
+					f.copy(this.selectedDir.getAbsolutePath());
 					break;
+				default: throw new Exception("A selection was not made.");
 			}
 		}
+	}
+	
+	public void showErrorMessage(JFrame root, String message) {
+		JOptionPane.showMessageDialog(root, message);
 	}
 }

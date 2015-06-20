@@ -17,23 +17,14 @@ public class FileTests {
 		String root = "/opt/c2";
 		String path = "/opt/c2/something/else/test.txt";
 		String expected = "/opt/c2/something-else-test.txt";
-		String actual = fs.newFileDestination(root, path).getAbsolutePath();
+		String actual = fs.newFileDestination(root, path);
 		
 		assertEquals(expected, actual);
 		
 		root = "/opt/c2";
 		path = "/opt/c2/something/else/test-1.txt";
 		expected = "/opt/c2/something-else-test-1.txt";
-		actual = fs.newFileDestination(root, path).getAbsolutePath();
+		actual = fs.newFileDestination(root, path);
 		assertEquals(expected, actual);
-	}
-	
-	@Test
-	public void testWindowsRename() throws IOException {
-		FileSystem fs = new Windows();
-	}
-	@Test
-	public void testCopy() {
-		//System.out.println(new File("moveTest").listFiles()[0].toString());
 	}
 }
