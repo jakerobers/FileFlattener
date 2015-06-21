@@ -6,19 +6,20 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.ButtonGroup;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.JRadioButton;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.JButton;
 import javax.swing.border.EtchedBorder;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionListener;
 import java.io.File;
+import javax.swing.JLayeredPane;
 
 public class Window extends JFrame {
 
@@ -115,9 +116,14 @@ public class Window extends JFrame {
 		btnGo.setBounds(6, 157, 139, 29);
 		btnGo.addActionListener(e -> {
 			try {
+				for ( ActionListener a : btnGo.getActionListeners() ) {
+					btnGo.removeActionListener(a);
+				}
+				btnGo.setEnabled(false);
+				showMessage(this, "In progress... The program will close itself when completed.");
 				this.go();
 			} catch (Exception e1) {
-				showErrorMessage(this, e1.getMessage());
+				showMessage(this, e1.getMessage());
 				e1.printStackTrace();
 			}
 		});
@@ -128,6 +134,14 @@ public class Window extends JFrame {
 		lblIAmNot.setForeground(Color.RED);
 		lblIAmNot.setBounds(162, 154, 270, 32);
 		panel_1.add(lblIAmNot);
+		
+		JButton btnAbout = new JButton("About");
+		btnAbout.setFont(new Font("Arial", Font.PLAIN, 13));
+		btnAbout.setBounds(315, 6, 117, 29);
+		btnAbout.addActionListener(e -> {
+			showAbout(this);
+		});
+		panel_1.add(btnAbout);
 	}
 	
 	public void go() throws Exception {
@@ -147,7 +161,30 @@ public class Window extends JFrame {
 		}
 	}
 	
-	public void showErrorMessage(JFrame root, String message) {
+	public void showMessage(JFrame root, String message) {
 		JOptionPane.showMessageDialog(root, message);
+	}
+	
+	public void showAbout(JFrame root) {
+		JDialog about = new JDialog(root);
+		about.setBackground(Color.LIGHT_GRAY);
+		about.setBounds(78, 150, 500, 215);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		about.setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		about.setVisible(true);
+		JLabel author = new JLabel("Created by Jake Robers");
+		author.setBounds(20, 40, 400, 20);
+		contentPane.add(author);
+		
+		JLabel twitter = new JLabel("Twitter: @Jake_Robers");
+		twitter.setBounds(20, 70, 400, 20);
+		contentPane.add(twitter);
+		
+		JLabel github = new JLabel("Source: https://github.com/jakerobers/FileFlattener");
+		github.setBounds(20, 100, 400, 20);
+		contentPane.add(github);
 	}
 }

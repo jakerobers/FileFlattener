@@ -9,7 +9,6 @@ public class Unix implements FileSystem {
 	@Override
 	public String newFileDestination(String root, String source) {
 		//process new filename
-		char c = root.charAt(root.length()-1);
 		if ( root.charAt(root.length()-1) != '/' ) {
 			root += '/';
 		}
