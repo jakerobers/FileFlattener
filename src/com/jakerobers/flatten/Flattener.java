@@ -27,7 +27,6 @@ public abstract class Flattener {
 		}
 		
 		for ( File f : files ) {
-			System.out.println(root.getAbsolutePath());
 			if ( f.isDirectory() ) {
 				recurse(source, f.getAbsolutePath(), destination);
 			}
