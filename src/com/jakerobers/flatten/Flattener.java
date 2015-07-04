@@ -22,7 +22,6 @@ public abstract class Flattener {
 	public void traverse(String source, String destination) throws Exception {
 		File root = new File(source);
 		File[] files = root.listFiles();
-		
 		if (files == null) {
 			return;
 		}
@@ -30,9 +29,9 @@ public abstract class Flattener {
 		for ( File f : files ) {
 			if ( f.isDirectory() ) {
 				recurse(source, f.getAbsolutePath(), destination);
-				System.exit(0);
 			}
 		}
+		System.exit(0);
 	}
 	
 	private void recurse(String root, String source, String destination) throws Exception {
