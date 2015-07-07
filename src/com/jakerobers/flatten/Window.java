@@ -19,7 +19,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.io.File;
-import javax.swing.JLayeredPane;
 
 public class Window extends JFrame {
 
